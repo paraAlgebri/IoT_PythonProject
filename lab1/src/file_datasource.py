@@ -1,9 +1,9 @@
 from csv import reader
 from datetime import datetime
 
-from src.domain.accelerometer import Accelerometer
-from src.domain.aggregated_data import AggregatedData
-from src.domain.gps import Gps
+from lab1.src.domain.accelerometer import Accelerometer
+from lab1.src.domain.aggregated_data import AggregatedData
+from lab1.src.domain.gps import Gps
 
 
 class FileDatasource:

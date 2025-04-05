@@ -16,7 +16,7 @@ services:
 
   fake_agent:
     container_name: agent
-    build: .
+    build: ..
     depends_on:
       - mqtt
     environment:

@@ -16,7 +16,7 @@ RUN pip install --upgrade pip \
 COPY accelerometer.csv gps.csv data.csv /usr/
 
 # Копіюємо код додатку
-COPY src/ ./src/
+COPY src ./lab1/src/
 
 # Додаємо поточну директорію до шляху Python
 ENV PYTHONPATH=/usr/agent

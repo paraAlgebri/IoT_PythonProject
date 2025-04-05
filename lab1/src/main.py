@@ -1,9 +1,9 @@
 import os
 import time
 import json
-from src.domain.aggregated_data import AggregatedData
-from src.file_datasource import FileDatasource
-from src.shema.aggregated_data_schema import AggregatedDataSchema
+from lab1.src.domain.aggregated_data import AggregatedData
+from lab1.src.file_datasource import FileDatasource
+from lab1.src.shema.aggregated_data_schema import AggregatedDataSchema
 import paho.mqtt.client as mqtt
 
 # Конфігурація змінних середовища
