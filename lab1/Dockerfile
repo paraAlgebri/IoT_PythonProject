@@ -12,11 +12,14 @@ COPY requirements.txt .
 RUN pip install --upgrade pip \
  && pip install --no-cache-dir -r requirements.txt
 
-# Копіюємо CSV файли у батьківську директорію
-COPY accelerometer.csv gps.csv data.csv /usr/
+# Копіюємо CSV файли на ОДИН РІВЕНЬ ВИЩЕ робочої директорії
+COPY accelerometer.csv gps.csv data.csv /usr/agent/../
 
 # Копіюємо код додатку
-COPY src ./lab1/src/
+COPY . .
+
+# Створюємо символічне посилання для lab1
+RUN ln -s /usr/agent /usr/agent/lab1
 
 # Додаємо поточну директорію до шляху Python
 ENV PYTHONPATH=/usr/agent

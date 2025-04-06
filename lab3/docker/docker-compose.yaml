@@ -1,0 +1,94 @@
+version: "3.9"
+name: "road_vision__hub"
+services:
+  mosquitto:
+    image: eclipse-mosquitto:latest
+    container_name: mosquitto
+    volumes:
+      - ../mosquitto/config:/mosquitto/config
+      - ../mosquitto/data:/mosquitto/data
+      - ../mosquitto/log:/mosquitto/log
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    networks:
+      - mqtt_network
+      - app-network
+
+  postgres_db:
+    image: postgres:latest
+    container_name: postgres_db
+    restart: always
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: test_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./db/structure.sql:/docker-entrypoint-initdb.d/structure.sql
+    ports:
+      - "5432:5432"
+    networks:
+      - db_network
+
+  store:
+    container_name: store
+    build:
+      context: ../../lab2
+      dockerfile: Dockerfile
+    depends_on:
+      - postgres_db
+    restart: always
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: test_db
+      POSTGRES_HOST: postgres_db
+      POSTGRES_PORT: 5432
+    ports:
+      - "8000:8000"
+    networks:
+      - db_network
+      - hub_store
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - "6379:6379"
+    networks:
+      - hub_redis
+
+  hub:
+    container_name: hub
+    build: ../
+    depends_on:
+      - mosquitto
+      - redis
+      - store
+    environment:
+      STORE_API_HOST: "store"
+      STORE_API_PORT: 8000
+      REDIS_HOST: "redis"
+      REDIS_PORT: 6379
+      MQTT_BROKER_HOST: "mosquitto"
+      MQTT_BROKER_PORT: 1883
+      MQTT_TOPIC: "processed_data_topic"
+      BATCH_SIZE: 1
+    ports:
+      - "9000:8000"
+    networks:
+      - mqtt_network
+      - hub_store
+      - hub_redis
+      - app-network
+
+networks:
+  mqtt_network:
+  db_network:
+  hub_store:
+  hub_redis:
+  app-network:
+
+volumes:
+  postgres_data:
